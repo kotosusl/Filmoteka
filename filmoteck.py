@@ -152,11 +152,14 @@ class AddFilm(AddFrom):
 
     def adding(self):
         if self.name.toPlainText() and self.year.toPlainText().isdigit() and self.duration.toPlainText().isdigit():
-            self.add_table = QSqlQuery()
-            self.add_table.exec(f'''INSERT INTO films(title, year, genre, duration) 
-            VALUES ("{self.name.toPlainText()}", {self.year.toPlainText()}, 
-            (select id from genres where title = "{self.genre.currentText()}"), {self.duration.toPlainText()})''')
-            self.close()
+            if self.name.toPlainText() not in [p[0] for p in self.cur.execute('select title from films').fetchall()]:
+                self.add_table = QSqlQuery()
+                self.add_table.exec(f'''INSERT INTO films(title, year, genre, duration) 
+                VALUES ("{self.name.toPlainText()}", {self.year.toPlainText()}, 
+                (select id from genres where title = "{self.genre.currentText()}"), {self.duration.toPlainText()})''')
+                self.close()
+            else:
+                self.error.setText('Фильм уже добавлен')
         else:
             self.error.setText('Неверно заполнена форма')
 
@@ -165,8 +168,6 @@ class AddFilm(AddFrom):
         FLAG = False
         global form
         form.update_table()
-
-
 
 
 class DatabaseNotFound(QMainWindow, QWidget):
