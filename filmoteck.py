@@ -147,7 +147,7 @@ class AddFilm(AddFrom):
         self.setFixedSize(325, 175)
         con = sqlite3.connect('films_db.sqlite')
         self.cur = con.cursor()
-        self.genre.addItems([p[0] for p in self.cur.execute('''select title from genres''').fetchall()])
+        self.genre.addItems([str(p[0]) for p in self.cur.execute('''select title from genres''').fetchall()])
         self.add.clicked.connect(self.adding)
 
     def adding(self):
